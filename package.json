@@ -1,0 +1,9 @@
+{
+	"type": "module",
+	"dependencies": {
+		"@keyv/sqlite": "^3.6.7",
+		"@network-utils/arp-lookup": "^2.1.0",
+		"dns2": "^2.1.0",
+		"keyv": "^4.5.4"
+	}
+}
