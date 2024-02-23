@@ -17,7 +17,7 @@ const resolve = TCPClient({
     dns: '1.1.1.1'
 });
 
-const server = createServer({
+const dnsserver = createServer({
     udp: true,
     handle: async (request, send, rinfo) => {
         console.log(await toMAC(rinfo.address))
@@ -38,7 +38,7 @@ const server = createServer({
     }
 });
 
-server.on('request', async (request, response, rinfo) => {
+dnsserver.on('request', async (request, response, rinfo) => {
     for (const question of request.questions) {
         if (!await visited.get(question.name)) {
             await visited.set(question.name, [])
@@ -49,19 +49,19 @@ server.on('request', async (request, response, rinfo) => {
     }
 });
 
-server.on('requestError', (error) => {
+dnsserver.on('requestError', (error) => {
     console.log('Client sent an invalid request', error);
 });
 
-server.on('listening', () => {
-    console.log(server.addresses());
+dnsserver.on('listening', () => {
+    console.log(dnsserver.addresses());
 });
 
-server.on('close', () => {
-    console.log('server closed');
+dnsserver.on('close', () => {
+    console.log('dnsserver closed');
 });
 
-server.listen({
+dnsserver.listen({
     // Optionally specify port, address and/or the family of socket() for udp server:
     udp: {
         port: 53,
@@ -75,6 +75,3 @@ server.listen({
         address: "0.0.0.0",
     },
 });
-
-// eventually
-//server.close();
