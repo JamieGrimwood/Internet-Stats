@@ -2,6 +2,11 @@ import dns2 from 'dns2';
 const { TCPClient, Packet, createServer } = dns2;
 import Keyv from 'keyv';
 import { toMAC } from '@network-utils/arp-lookup';
+import path from 'path';
+const __dirname = path.resolve();
+
+import express from 'express';
+const webserver = express();
 
 const visited = new Keyv('sqlite://database.sqlite', { namespace: 'visited' });
 const blocked_websites_db = new Keyv('sqlite://database.sqlite', { namespace: 'blocked_websites' });
@@ -11,7 +16,11 @@ let blocked_websites_list = [];
 
 (async () => {
     blocked_websites_list = (await blocked_websites_db.get('websites'))
-})();  
+})();
+
+webserver.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 
 const resolve = TCPClient({
     dns: '1.1.1.1'
@@ -74,4 +83,8 @@ dnsserver.listen({
         port: 53,
         address: "0.0.0.0",
     },
+});
+
+webserver.listen(3000, () => {
+    console.log("server started on port 5000");
 });
